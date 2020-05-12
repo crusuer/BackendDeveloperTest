@@ -1,27 +1,25 @@
 # Backend developer test
+Project developed as solution for a Backend developer test.
 
-# Build
-Information about how to build the application in different environments.
+## Application Setup (Local)
+Local build of the application is possible as standalone application.
 
-## Local
-Local build of the application is possible as standalone application and Docker image.
-
-### Standalone
-#### Requirements
+### Requirements
 * Java 8 (JDK)
 * Maven 3.6+
 
-Command: ```mvn clean package```
-
+### Installation
+It's necessary to compile the code and download the project dependencies. Command:
+```
+mvn clean package
+```
 Result artifact:  ```target/BackendDevelopertTest-*.jar```
 
-# Run
-How to run the application?
-
-# Application Setup (Local)
-After local build executed,
-
-Command: ```mvn spring-boot:run```
+### Run
+After local build executed. Command: 
+```
+mvn spring-boot:run
+```
 
 ## Documentation
 Swagger:

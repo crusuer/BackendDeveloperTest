@@ -9,14 +9,14 @@ import org.example.rest.EndpointUrls;
 import org.example.service.GameService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.example.rest.game.FileReaderUtil.readAllBytes;
+import java.util.ArrayList;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,9 +36,6 @@ class GameControllerTest {
 
     @Test
     void shouldPostUserScore() throws Exception {
-
-        when(gameService.postScore(scoreDTO)).thenReturn(null);
-
         this.mockMvc.perform(
                 post(EndpointUrls.SCORE)
                         .content(new Gson().toJson(scoreDTO))
@@ -64,7 +61,7 @@ class GameControllerTest {
 
     @Test
     void shouldGetHighscoreList() throws Exception {
-        HighscoresDTO highscores = new HighscoresDTO();
+        HighscoresDTO highscores = new HighscoresDTO(new ArrayList<>());
         when(gameService.getHighscores()).thenReturn(highscores);
 
         this.mockMvc.perform(
@@ -72,7 +69,6 @@ class GameControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isOk());
-
     }
 
 }

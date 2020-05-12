@@ -8,7 +8,6 @@ import org.example.model.dto.HighscoresDTO;
 import org.example.model.dto.ScoreDTO;
 import org.example.rest.EndpointUrls;
 import org.example.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,20 +26,20 @@ public class GameController {
 
     @GetMapping(path = EndpointUrls.USER_POSITION)
     @ApiOperation(value = "Retrieve user position by id")
-    User getUserPosition(@PathVariable Long userId) {
+    public User getUserPosition(@PathVariable Long userId) {
         return gameService.getPosition(userId);
     }
 
     @PostMapping(path = EndpointUrls.SCORE)
     @ApiOperation(value = "Post user position by id")
-    ResponseEntity<Void> postUserScore(@Valid @RequestBody ScoreDTO scoreDTO) {
+    public ResponseEntity<Void> postUserScore(@Valid @RequestBody ScoreDTO scoreDTO) {
         gameService.postScore(scoreDTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping(path = EndpointUrls.HIGHSCORELIST)
     @ApiOperation(value = "Retrieve a list of highest scores")
-    HighscoresDTO getHighestScores() {
+    public HighscoresDTO getHighestScores() {
         return gameService.getHighscores();
     }
 

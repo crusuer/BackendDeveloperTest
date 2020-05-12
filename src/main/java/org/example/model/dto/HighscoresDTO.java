@@ -1,14 +1,11 @@
 package org.example.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.example.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 public class HighscoresDTO {
-    private List<User> highscoresList = new ArrayList<>();
+    private final List<User> highscoresList;
 }
