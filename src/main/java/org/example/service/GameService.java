@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.model.User;
 import org.example.model.dto.HighscoresDTO;
 import org.example.model.dto.ScoreDTO;
+import org.example.rest.exception.ScoreInvalidException;
 import org.example.rest.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class GameService {
     private ConcurrentMap<Long, User> userMap = new ConcurrentHashMap<>();
 
     public void postScore(ScoreDTO scoreDTO) {
+        if (scoreDTO == null) {
+            throw new ScoreInvalidException();
+        }
         executor.submit(() -> {
             User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
             user.setScore(user.getScore() + scoreDTO.getPoints());

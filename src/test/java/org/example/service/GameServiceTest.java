@@ -4,6 +4,7 @@ import org.example.application.App;
 import org.example.model.User;
 import org.example.model.dto.HighscoresDTO;
 import org.example.model.dto.ScoreDTO;
+import org.example.rest.exception.ScoreInvalidException;
 import org.example.rest.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
@@ -29,10 +29,16 @@ class GameServiceTest {
         Thread.sleep(500);
 
         User result = gameService.getPosition(scoreDTO.getUserId());
+        assertNotNull(result);
         assertEquals(1, result.getUserId());
         assertEquals(5, result.getScore());
 
         gameService.deleteUser(scoreDTO.getUserId());
+    }
+
+    @Test
+    void shouldNotPostInvalidScore() {
+        assertThrows(ScoreInvalidException.class, () -> gameService.postScore(null));
     }
 
     @Test
@@ -43,6 +49,7 @@ class GameServiceTest {
         Thread.sleep(500);
 
         User result = gameService.getPosition(scoreDTO.getUserId());
+        assertNotNull(result);
         assertEquals(2, result.getUserId());
         assertEquals(8, result.getScore());
 
@@ -68,6 +75,7 @@ class GameServiceTest {
         HighscoresDTO highscoresDTO = gameService.getHighscores();
         List<User> result = highscoresDTO.getHighscoresList();
 
+        assertEquals(3, result.size());
         assertEquals(7, result.get(0).getUserId());
         assertEquals(200, result.get(0).getScore());
         assertEquals(6, result.get(1).getUserId());
@@ -78,5 +86,12 @@ class GameServiceTest {
         gameService.deleteUser(scoreMin.getUserId());
         gameService.deleteUser(scoreMed.getUserId());
         gameService.deleteUser(scoreMax.getUserId());
+    }
+
+    @Test
+    void shouldGetEmptyHighscoreList() throws Exception {
+        HighscoresDTO highscoresDTO = gameService.getHighscores();
+        List<User> result = highscoresDTO.getHighscoresList();
+        assertTrue(result.isEmpty());
     }
 }
