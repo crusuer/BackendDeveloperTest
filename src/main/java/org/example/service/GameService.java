@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameService {
     private static final int MAX_HIGHSCORE = 20000;
-    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+    private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     private ConcurrentMap<Long, User> userMap = new ConcurrentHashMap<>();
 
     public void postScore(ScoreDTO scoreDTO) {
