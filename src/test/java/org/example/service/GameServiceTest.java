@@ -23,9 +23,11 @@ class GameServiceTest {
     private GameService gameService;
 
     @Test
-    void shouldPostValidScore() {
+    void shouldPostValidScore() throws Exception {
         ScoreDTO scoreDTO = new ScoreDTO(1, 5);
         gameService.postScore(scoreDTO);
+        Thread.sleep(500);
+
         User result = gameService.getPosition(scoreDTO.getUserId());
         assertEquals(1, result.getUserId());
         assertEquals(5, result.getScore());
@@ -34,14 +36,14 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldSumScoreOfUser() {
-        ScoreDTO scoreDTO = new ScoreDTO(1, 4);
+    void shouldSumScoreOfUser() throws Exception {
+        ScoreDTO scoreDTO = new ScoreDTO(2, 4);
         gameService.postScore(scoreDTO);
         gameService.postScore(scoreDTO);
-
+        Thread.sleep(500);
 
         User result = gameService.getPosition(scoreDTO.getUserId());
-        assertEquals(1, result.getUserId());
+        assertEquals(2, result.getUserId());
         assertEquals(8, result.getScore());
 
         gameService.deleteUser(scoreDTO.getUserId());
@@ -53,23 +55,24 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldGetHighscoreList() {
-        ScoreDTO scoreMin = new ScoreDTO(1, 50);
-        ScoreDTO scoreMed = new ScoreDTO(2, 100);
-        ScoreDTO scoreMax = new ScoreDTO(3, 200);
+    void shouldGetHighscoreList() throws Exception {
+        ScoreDTO scoreMin = new ScoreDTO(5, 50);
+        ScoreDTO scoreMed = new ScoreDTO(6, 100);
+        ScoreDTO scoreMax = new ScoreDTO(7, 200);
 
         gameService.postScore(scoreMin);
         gameService.postScore(scoreMed);
         gameService.postScore(scoreMax);
+        Thread.sleep(500);
 
         HighscoresDTO highscoresDTO = gameService.getHighscores();
         List<User> result = highscoresDTO.getHighscoresList();
 
-        assertEquals(3, result.get(0).getUserId());
+        assertEquals(7, result.get(0).getUserId());
         assertEquals(200, result.get(0).getScore());
-        assertEquals(2, result.get(1).getUserId());
+        assertEquals(6, result.get(1).getUserId());
         assertEquals(100, result.get(1).getScore());
-        assertEquals(1, result.get(2).getUserId());
+        assertEquals(5, result.get(2).getUserId());
         assertEquals(50, result.get(2).getScore());
 
         gameService.deleteUser(scoreMin.getUserId());

@@ -13,20 +13,25 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class GameService {
     private static final int MAX_HIGHSCORE = 20000;
+    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     private ConcurrentMap<Long, User> userMap = new ConcurrentHashMap<>();
 
     public void postScore(ScoreDTO scoreDTO) {
-        User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
-        user.setScore(user.getScore() + scoreDTO.getPoints());
-        log.debug(user.toString());
+        executor.submit(() -> {
+            User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
+            user.setScore(user.getScore() + scoreDTO.getPoints());
+            log.debug(user.toString());
 
-        userMap.put(scoreDTO.getUserId(), user);
+            userMap.put(scoreDTO.getUserId(), user);
+        });
     }
 
     public User getPosition(Long userId) {
