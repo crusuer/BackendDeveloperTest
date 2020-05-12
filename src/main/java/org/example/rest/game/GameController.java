@@ -26,12 +26,12 @@ public class GameController {
 
     @GetMapping(path = EndpointUrls.USER_POSITION)
     @ApiOperation(value = "Retrieve user position by id")
-    public User getUserPosition(@PathVariable Long userId) {
-        return gameService.getPosition(userId);
+    public ResponseEntity<User> getUserPosition(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(gameService.getPosition(userId));
     }
 
     @PostMapping(path = EndpointUrls.SCORE)
-    @ApiOperation(value = "Post user position by id")
+    @ApiOperation(value = "Post a user score")
     public ResponseEntity<Void> postUserScore(@Valid @RequestBody ScoreDTO scoreDTO) {
         gameService.postScore(scoreDTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();

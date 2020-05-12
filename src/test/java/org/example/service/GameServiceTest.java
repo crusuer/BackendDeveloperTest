@@ -5,7 +5,6 @@ import org.example.model.User;
 import org.example.model.dto.HighscoresDTO;
 import org.example.model.dto.ScoreDTO;
 import org.example.rest.exception.ScoreInvalidException;
-import org.example.rest.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ class GameServiceTest {
         assertNotNull(result);
         assertEquals(1, result.getUserId());
         assertEquals(5, result.getScore());
+        assertEquals(1, result.getPosition());
 
         gameService.deleteUser(scoreDTO.getUserId());
     }
@@ -52,13 +52,32 @@ class GameServiceTest {
         assertNotNull(result);
         assertEquals(2, result.getUserId());
         assertEquals(8, result.getScore());
+        assertEquals(1, result.getPosition());
 
         gameService.deleteUser(scoreDTO.getUserId());
     }
 
     @Test
-    void shouldThrowUserNotFoundExceptionToNonExistingUser() {
-        assertThrows(UserNotFoundException.class, () -> gameService.getPosition(0L));
+    void shouldInvertUserPosition() throws Exception {
+        ScoreDTO scoreDTO = new ScoreDTO(1, 4);
+        ScoreDTO scoreDTO2 = new ScoreDTO(2, 5);
+        gameService.postScore(scoreDTO);
+        gameService.postScore(scoreDTO2);
+        Thread.sleep(500);
+
+        User result = gameService.getPosition(scoreDTO.getUserId());
+        assertEquals(1, result.getUserId());
+        assertEquals(2, result.getPosition());
+
+        gameService.postScore(scoreDTO);
+        Thread.sleep(500);
+
+        User result2 = gameService.getPosition(scoreDTO.getUserId());
+        assertEquals(1, result2.getUserId());
+        assertEquals(1, result2.getPosition());
+
+        gameService.deleteUser(scoreDTO.getUserId());
+        gameService.deleteUser(scoreDTO2.getUserId());
     }
 
     @Test
@@ -76,12 +95,18 @@ class GameServiceTest {
         List<User> result = highscoresDTO.getHighscoresList();
 
         assertEquals(3, result.size());
+
         assertEquals(7, result.get(0).getUserId());
         assertEquals(200, result.get(0).getScore());
+        //assertEquals(1, result.get(0).getPosition());
+
         assertEquals(6, result.get(1).getUserId());
         assertEquals(100, result.get(1).getScore());
+        //assertEquals(2, result.get(1).getPosition());
+
         assertEquals(5, result.get(2).getUserId());
         assertEquals(50, result.get(2).getScore());
+        //assertEquals(3, result.get(2).getPosition());
 
         gameService.deleteUser(scoreMin.getUserId());
         gameService.deleteUser(scoreMed.getUserId());
@@ -89,7 +114,7 @@ class GameServiceTest {
     }
 
     @Test
-    void shouldGetEmptyHighscoreList() throws Exception {
+    void shouldGetEmptyHighscoreList() {
         HighscoresDTO highscoresDTO = gameService.getHighscores();
         List<User> result = highscoresDTO.getHighscoresList();
         assertTrue(result.isEmpty());
