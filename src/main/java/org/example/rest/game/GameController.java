@@ -19,8 +19,11 @@ import javax.validation.Valid;
 @RestController
 @Api(value = "Game", tags = {"game"})
 public class GameController {
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
+
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @GetMapping(path = EndpointUrls.USER_POSITION)
     @ApiOperation(value = "Retrieve user position by id")
@@ -32,7 +35,7 @@ public class GameController {
     @ApiOperation(value = "Post user position by id")
     ResponseEntity<Void> postUserScore(@Valid @RequestBody ScoreDTO scoreDTO) {
         gameService.postScore(scoreDTO);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @GetMapping(path = EndpointUrls.HIGHSCORELIST)
