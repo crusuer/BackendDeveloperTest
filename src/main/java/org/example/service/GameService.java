@@ -35,20 +35,13 @@ public class GameService {
             throw new ScoreInvalidException();
         }
 
-        User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
-        user.setScore(user.getScore() + scoreDTO.getPoints());
-        log.debug(user.toString());
+        executor.submit(() -> {
+                    User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
+                    user.setScore(user.getScore() + scoreDTO.getPoints());
+                    log.debug(user.toString());
 
-        userMap.put(scoreDTO.getUserId(), user);
-
-
-        /*executor.submit(() -> {
-            User user = userMap.getOrDefault(scoreDTO.getUserId(), new User(scoreDTO.getUserId(), 0, 0));
-            user.setScore(user.getScore() + scoreDTO.getPoints());
-            log.debug(user.toString());
-
-            userMap.put(scoreDTO.getUserId(), user);
-        });*/
+                    userMap.put(scoreDTO.getUserId(), user);
+        });
     }
 
     public User getPosition(Long userId) {
