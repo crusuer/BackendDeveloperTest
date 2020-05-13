@@ -5,6 +5,7 @@ import org.example.model.User;
 import org.example.model.dto.HighscoresDTO;
 import org.example.model.dto.ScoreDTO;
 import org.example.rest.exception.ScoreInvalidException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,11 @@ class GameServiceTest {
     @Autowired
     private GameService gameService;
 
+    @BeforeEach
+    void setUp() throws Exception {
+        gameService.clearUsers();
+    }
+
     @Test
     void shouldPostValidScore() throws Exception {
         ScoreDTO scoreDTO = new ScoreDTO(1, 5);
@@ -32,8 +38,6 @@ class GameServiceTest {
         assertEquals(1, result.getUserId());
         assertEquals(5, result.getScore());
         assertEquals(1, result.getPosition());
-
-        gameService.deleteUser(scoreDTO.getUserId());
     }
 
     @Test
@@ -53,8 +57,6 @@ class GameServiceTest {
         assertEquals(2, result.getUserId());
         assertEquals(8, result.getScore());
         assertEquals(1, result.getPosition());
-
-        gameService.deleteUser(scoreDTO.getUserId());
     }
 
     @Test
@@ -75,9 +77,13 @@ class GameServiceTest {
         User result2 = gameService.getPosition(scoreDTO.getUserId());
         assertEquals(1, result2.getUserId());
         assertEquals(1, result2.getPosition());
+    }
 
-        gameService.deleteUser(scoreDTO.getUserId());
-        gameService.deleteUser(scoreDTO2.getUserId());
+    @Test
+    void shouldGetEmptyHighscoreList() {
+        HighscoresDTO highscoresDTO = gameService.getHighscores();
+        List<User> result = highscoresDTO.getHighscoresList();
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -89,7 +95,8 @@ class GameServiceTest {
         gameService.postScore(scoreMin);
         gameService.postScore(scoreMed);
         gameService.postScore(scoreMax);
-        Thread.sleep(500);
+
+        Thread.sleep(3000);
 
         HighscoresDTO highscoresDTO = gameService.getHighscores();
         List<User> result = highscoresDTO.getHighscoresList();
@@ -98,25 +105,14 @@ class GameServiceTest {
 
         assertEquals(7, result.get(0).getUserId());
         assertEquals(200, result.get(0).getScore());
-        //assertEquals(1, result.get(0).getPosition());
+        assertEquals(1, result.get(0).getPosition());
 
         assertEquals(6, result.get(1).getUserId());
         assertEquals(100, result.get(1).getScore());
-        //assertEquals(2, result.get(1).getPosition());
+        assertEquals(2, result.get(1).getPosition());
 
         assertEquals(5, result.get(2).getUserId());
         assertEquals(50, result.get(2).getScore());
-        //assertEquals(3, result.get(2).getPosition());
-
-        gameService.deleteUser(scoreMin.getUserId());
-        gameService.deleteUser(scoreMed.getUserId());
-        gameService.deleteUser(scoreMax.getUserId());
-    }
-
-    @Test
-    void shouldGetEmptyHighscoreList() {
-        HighscoresDTO highscoresDTO = gameService.getHighscores();
-        List<User> result = highscoresDTO.getHighscoresList();
-        assertTrue(result.isEmpty());
+        assertEquals(3, result.get(2).getPosition());
     }
 }
